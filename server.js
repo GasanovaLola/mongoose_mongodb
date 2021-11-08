@@ -1,13 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
+var env = require('dotenv').config();
 
 const Schema = mongoose.Schema;
 
 const app = express();
 
 const host = 'localhost';
-const port = 5000;
 
 // установка схемы
 const userScheme = new Schema({
@@ -25,7 +25,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // подключение
-mongoose.connect("mongodb+srv://user:user@cluster0.nka5m.mongodb.net/UserMongoose?retryWrites=true&w=majority", { useUnifiedTopology: true, useNewUrlParser: true })
+const MONGODB_LINK = process.env.MONGODB_LINK;
+console.log(MONGODB_LINK);
+mongoose.connect(MONGODB_LINK, { useUnifiedTopology: true, useNewUrlParser: true })
 
 app.get('/', (req, res) => {
     User.find({}, function(error, users){
@@ -101,6 +103,9 @@ app.delete('/:userId', (req, res) => {
             }
     });
 });
-app.listen(port, host, function () {
-    console.log(`Server listens http://${host}:${port}`)
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, host, function () {
+    console.log(`Server listens http://${host}:${PORT}`)
 });
